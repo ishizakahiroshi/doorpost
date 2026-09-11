@@ -24,7 +24,13 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
-          go-version-file: go.mod
+          # Not go-version-file here. go.mod declares go 1.22 so that callers on
+          # 1.22 can use this module, but building with 1.22 on macos-latest hits
+          # a linker bug ("missing LC_UUID load command") that aborts every test
+          # binary. That is a toolchain/runner mismatch, not a defect in this code.
+          # The matrix therefore runs on the current toolchain, and the
+          # minimum-version job below keeps the go 1.22 promise honest.
+          go-version: stable
           cache: true
       - name: Build
         run: go build ./...
@@ -34,6 +40,22 @@ jobs:
         run: go vet ./...
       - name: Verify modules
         run: go mod verify
+
+  minimum-go:
+    name: Minimum Go (from go.mod)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          # The version this module claims to support. Linux only: the macOS
+          # linker bug above is unrelated to whether the code compiles.
+          go-version-file: go.mod
+          cache: true
+      - name: Build
+        run: go build ./...
+      - name: Test
+        run: go test ./...
 
   gofmt:
     runs-on: ubuntu-latest
