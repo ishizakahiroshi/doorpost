@@ -94,3 +94,9 @@ config.*.toml
 
 # === project-init: obsidian public ===
 /docs/obsidian/
+
+# Local video sources and renders (Drive-backed junction)
+/brag-output/
+
+# === project-init 推奨の追記（2026-09-28・templates/gitignore から不足分のみ） ===
+.commandcode/
