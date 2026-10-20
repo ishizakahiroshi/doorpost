@@ -89,9 +89,6 @@ config.toml
 config.*.toml
 !config/common.example.toml
 
-# === secrets-scan exception ===
-!scripts/secrets-scan.mjs
-
 # === project-init: obsidian public ===
 /docs/obsidian/
 
